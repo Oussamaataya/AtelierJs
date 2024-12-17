@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: scroll; }
+        input, button { margin-top: 10px; }
+    </style>
+</head>
+<body>
+<h1>Bienvenue dans la salle de chat</h1>
+<div id="chat"></div>
+<input type="text" id="message" placeholder="Tapez votre message..." />
+<button onclick="sendMessage()">Envoyer</button>
+
+<script>
+    const socket = io.connect();
+    const chat = document.getElementById("chat");
+
+    // Affiche les messages reçus
+    socket.on("msg", (data) => {
+        const p = document.createElement("p");
+        p.textContent = data;
+        chat.appendChild(p);
+        chat.scrollTop = chat.scrollHeight; // Scroll automatique vers le bas
+    });
+
+    // Envoie un message au serveur
+    function sendMessage() {
+        const message = document.getElementById("message").value;
+        if (message) {
+            socket.emit("sendMessage", message); // Envoi du message au serveur
+            document.getElementById("message").value = ""; // Efface le champ
+        }
+    }
+</script>
+</body>
+</html>
